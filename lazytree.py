@@ -1,6 +1,7 @@
 import lxml.etree as ET
 import numpy as np
-from StringIO import StringIO
+import glob
+
 
 class LazyNode(dict):
     def __getattr__(self, attr):
@@ -33,3 +34,20 @@ class LazyTree(object):
 
     def keys(self):
         return self.data.keys()
+
+
+class Event(object):
+    def __init__(self, filename):
+        tree = ET.parse(filename)
+        root = tree.getroot()
+        self.data = elem_to_json(root)
+        self.attributes = LazyNode(root.items())
+
+    @staticmethod
+    def iterator(filenames):
+        """ An iterator over events by filenames. """
+        if isinstance(filenames, str):
+            filenames = glob.glob(filenames)
+
+        for filename in filenames:
+            yield Event(filename)
