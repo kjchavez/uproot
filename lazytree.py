@@ -10,6 +10,7 @@ class LazyNode(dict):
     def __repr__(self):
         return "<LazyNode: " + ", ".join(key for key in self.keys()) + ">"
 
+
 def elem_to_json(elem):
     if len(elem) == 0:
 
@@ -44,10 +45,13 @@ class Event(object):
         self.attributes = LazyNode(root.items())
 
     @staticmethod
-    def iterator(filenames):
+    def iterator(filenames, sort=False):
         """ An iterator over events by filenames. """
         if isinstance(filenames, str):
             filenames = glob.glob(filenames)
+
+        if sort:
+            filenames.sort()
 
         for filename in filenames:
             yield Event(filename)
